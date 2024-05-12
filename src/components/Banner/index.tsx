@@ -1,10 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { handleGeoBannerClose } from "./actions";
-import { supportedCountries } from "./countries";
+import { supportedCountries } from "../../app/countries";
+import CloseButton from "./CloseButton";
 
 export default function Banner() {
   const searchParams = useSearchParams();
@@ -18,9 +17,7 @@ export default function Banner() {
       <div>
         Continue to <Link href={`/${country.code}`}>{country.label}</Link>
       </div>
-      <button onClick={() => handleGeoBannerClose(window.location.pathname)}>
-        <Image src="/icons/cross.svg" alt="Close" width={14} height={14} />
-      </button>
+      <CloseButton />
     </div>
   );
 }

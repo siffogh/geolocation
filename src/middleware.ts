@@ -1,30 +1,22 @@
-import { getCountryFromPathname, supportedCountries } from "@/app/countries";
+import { getCountryFromPathname, getCountryFromRequest } from "@/app/countries";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const hasCountryParam = request.nextUrl.searchParams.has("country");
   const isAlreadySuggested =
     request.cookies.get("suggestedCountry")?.value === "true";
+  const requestedCountry = getCountryFromPathname(request.nextUrl.pathname);
+  const userCountry = getCountryFromRequest(request);
 
-  if (hasCountryParam || isAlreadySuggested) {
+  if (isAlreadySuggested || !userCountry || userCountry === requestedCountry) {
     return;
   }
 
-  const userCountry = request.geo?.country;
-  const isUserCountrySupported = supportedCountries.some(
-    (country) => country.code === userCountry
+  return NextResponse.redirect(
+    new URL(
+      `${request.nextUrl.pathname}?country=${userCountry}`,
+      request.nextUrl
+    )
   );
-  const requestedCountry = getCountryFromPathname(request.nextUrl.pathname);
-
-  if (isUserCountrySupported && userCountry !== requestedCountry) {
-    const response = NextResponse.redirect(
-      new URL(
-        `${request.nextUrl.pathname}?country=${userCountry}`,
-        request.nextUrl
-      )
-    );
-    return response;
-  }
 }
 
 export const config = {
