@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
     return;
   }
 
-  const userCountry = "de";
+  const userCountry = request.geo?.country;
   const isUserCountrySupported = supportedCountries.some(
     (country) => country.code === userCountry
   );
